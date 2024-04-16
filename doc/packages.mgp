@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PackageAnalysis>
+    <Package name="countdowntimer.android"
+        x="16" y="24">
+        <DependencyLink destination="countdowntimer.model"/>
+        <DependencyLink destination="countdowntimer.common"/>
+    </Package>
+    <Package name="countdowntimer.model"
+        x="327" y="191">
+        <DependencyLink destination="countdowntimer.model.state"/>
+        <DependencyLink destination="countdowntimer.model.clock"/>
+        <DependencyLink destination="countdowntimer.model.time"/>
+        <DependencyLink destination="countdowntimer.common"/>
+    </Package>
+    <Package
+        name="countdowntimer.model.clock"
+        x="316" y="432"/>
+    <Package
+        name="countdowntimer.model.state"
+        x="610" y="499">
+        <DependencyLink destination="countdowntimer.model.clock"/>
+        <DependencyLink destination="countdowntimer.model.time"/>
+        <DependencyLink destination="countdowntimer.common"/>
+    </Package>
+    <Package name="countdowntimer.model.time"
+        x="610" y="23"/>
+    <Package name="countdowntimer.common"
+        x="16" y="504"/>
+</PackageAnalysis>

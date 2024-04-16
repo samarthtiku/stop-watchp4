@@ -1,0 +1,25 @@
+<resources>
+
+    <!-- app strings -->
+    <string name="app_name">edu.luc.etl.cs313.android.countdowntimer</string>
+    <string name="menu_settings" translatable="false">Settings</string>
+    <string name="title_activity_main">Loyola CS 313/413 Countdown</string>
+
+    <!-- view strings -->
+    <string name="startStop" translatable="false">Start/Stop</string>
+    <string name="resetLap">Reset/Lap</string>
+    <string name="minutes">00</string>
+    <string name="seconds" translatable="false">00</string>
+    <string name="colon">:</string>
+
+    <!-- model state display names -->
+    <string name="STOPPED">Stopped</string>
+    <string name="RUNNING">Running</string>
+    <string name="ALARMING">Alarming</string>
+    <string name="SETTING">Setting</string>
+    <string name="TIMING">Timing</string>
+
+   // <string name="LAP_RUNNING">Lap/Running</string>
+   // <string name="LAP_STOPPED">Lap/Stopped</string>
+
+</resources>
