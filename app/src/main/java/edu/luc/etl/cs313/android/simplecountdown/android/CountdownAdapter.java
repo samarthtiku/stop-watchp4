@@ -25,7 +25,7 @@ import edu.luc.etl.cs313.android.simplecountdown.model.CountdownModelFacade;
 
 /**
  * A thin adapter component for the stopwatch.
- *Sam Tiku
+ *
  * @author laufer
  */
 public class CountdownAdapter extends Activity implements CountdownModelListener {
