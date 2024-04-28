@@ -1,3 +1,4 @@
+// Package declaration and imports
 package edu.luc.etl.cs313.android.simplecountdown.android;
 
 import android.app.Activity;
@@ -24,47 +25,37 @@ import edu.luc.etl.cs313.android.simplecountdown.model.ConcreteCountdownModelFac
 import edu.luc.etl.cs313.android.simplecountdown.model.CountdownModelFacade;
 
 /**
- * A thin adapter component for the stopwatch.
- *
- * @author laufer
+ * CountdownAdapter acts as a thin adapter layer between the view (UI) and the model.
+ * It extends Android's Activity class, enabling it to manage Android lifecycle events and handle user interactions.
  */
 public class CountdownAdapter extends Activity implements CountdownModelListener {
 
-    private static String TAG = "stopwatch-android-activity";
+    private static String TAG = "stopwatch-android-activity"; // Log tag, mostly used for debugging purposes.
 
-    /**
-     * The state-based dynamic model.
-     */
-    private CountdownModelFacade model;
-    private MediaPlayer mediaPlayer;
+    private CountdownModelFacade model; // Interface to the countdown model.
+    private MediaPlayer mediaPlayer; // Media player for playing sounds.
 
     protected void setModel(final CountdownModelFacade model) {
-        this.model = model;
+        this.model = model; // Dependency injection method for setting the model.
     }
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // inject dependency on view so this adapter receives UI events
-        setContentView(R.layout.activity_main);
-        //It will call initial notfication method.
-        playDefaultNotification();
-        //playSound(R.raw.start, false);
-        // inject dependency on model into this so model receives UI events
-        this.setModel(new ConcreteCountdownModelFacade());
-        // inject dependency on this into model to register for UI updates
-        model.setModelListener(this);
-        findViewById(R.id.seconds).setOnClickListener(new View.OnClickListener() {
+        setContentView(R.layout.activity_main); // Sets the layout for this activity.
+        playDefaultNotification(); // Plays a default notification sound at the start.
+        this.setModel(new ConcreteCountdownModelFacade()); // Sets up the model for this activity.
+        model.setModelListener(this); // Registers this activity as a listener for model updates.
+        findViewById(R.id.seconds).setOnClickListener(new View.OnClickListener() { // Sets up a click listener for the seconds view.
             @Override
             public void onClick(View view) {
                 if (model.isInitialState()) {
-                    showInputDialog();
+                    showInputDialog(); // Shows a dialog to input the initial countdown time if in the initial state.
                 }
             }
         });
     }
 
-    /** Plays the default notification sound. */
     protected void playDefaultNotification() {
         final Uri defaultRingtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         final MediaPlayer mediaPlayer = new MediaPlayer();
@@ -76,9 +67,9 @@ public class CountdownAdapter extends Activity implements CountdownModelListener
                     .setUsage(AudioAttributes.USAGE_ALARM)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .build());
-            mediaPlayer.prepare();
-            mediaPlayer.setOnCompletionListener(MediaPlayer::release);
-            mediaPlayer.start();
+            mediaPlayer.prepare(); // Prepares the media player to play the audio.
+            mediaPlayer.setOnCompletionListener(MediaPlayer::release); // Releases the media player after playing the sound.
+            mediaPlayer.start(); // Starts playing the sound.
         } catch (final IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -86,82 +77,65 @@ public class CountdownAdapter extends Activity implements CountdownModelListener
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main, menu);
+        getMenuInflater().inflate(R.menu.activity_main, menu); // Inflates the options menu.
         return true;
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        model.start();
+        model.start(); // Starts the model.
     }
 
-    // TODO remaining lifecycle methods
-
-    /**
-     * Updates the seconds and minutes in the UI.
-     * @param time
-     */
     public void onTimeUpdate(final int time) {
-        // UI adapter responsibility to schedule incoming events on UI thread
         runOnUiThread(() -> {
             final TextView tvS = findViewById(R.id.seconds);
             final var locale = Locale.getDefault();
-            tvS.setText(String.format(locale,"%02d", time ));
-                   });
+            tvS.setText(String.format(locale,"%02d", time )); // Updates the seconds display on the UI.
+        });
     }
 
-    /**
-     * Updates the state name in the UI.
-     * @param stateId
-     */
     public void onStateUpdate(final int stateId) {
-        // UI adapter responsibility to schedule incoming events on UI thread
         runOnUiThread(() -> {
             final TextView stateName = findViewById(R.id.stateName);
-            stateName.setText(getString(stateId));
+            stateName.setText(getString(stateId)); // Updates the state display on the UI.
         });
     }
 
     @Override
     public void onPlayBeep() {
-        playSound(R.raw.beep, false);
+        playSound(R.raw.beep, false); // Plays a beep sound.
     }
 
     @Override
     public void onStartAlarm() {
-        playSound(R.raw.alarm, true);
+        playSound(R.raw.alarm, true); // Plays an alarm sound.
     }
 
     @Override
     public void onStopAlarm() {
-        stopSound();
+        stopSound(); // Stops playing the sound.
     }
 
-    // forward event listener methods to the model
     public void onSetStop(final View view) {
-        model.onSetStop();
+        model.onSetStop(); // Sends a stop signal to the model.
     }
 
-
-    // play sounds
     protected void playSound(int resource, boolean isRepeat) {
-        mediaPlayer = MediaPlayer.create(this,resource);
-        mediaPlayer.setLooping(isRepeat);
-        mediaPlayer.start();
+        mediaPlayer = MediaPlayer.create(this, resource);
+        mediaPlayer.setLooping(isRepeat); // Sets the looping status based on the parameter.
+        mediaPlayer.start(); // Starts playing the specified sound.
     }
 
-    // to stop the alarm
     private void stopSound() {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-            mediaPlayer.stop();
+            mediaPlayer.stop(); // Stops the media player if it is currently playing.
         }
     }
 
-    // show dialog to take initial value for the time
     private void showInputDialog() {
         LayoutInflater li = LayoutInflater.from(this);
-        View promptsView = li.inflate(R.layout.input_dialog_box, null);
+        View promptsView = li.inflate(R.layout.input_dialog_box, null); // Inflates the input dialog box layout.
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setView(promptsView);
         EditText userInput = promptsView.findViewById(R.id.etInitialValue);
@@ -172,23 +146,20 @@ public class CountdownAdapter extends Activity implements CountdownModelListener
                         try {
                             String entryValue = userInput.getText().toString();
                             int time = Integer.parseInt(entryValue);
-                            model.initializeTime(time);
-                            onTimeUpdate(time);
+                            model.initializeTime(time); // Initializes the model's time with the user input.
+                            onTimeUpdate(time); // Updates the UI with the new time.
                         } catch (NumberFormatException e) {
                             e.printStackTrace();
                         }
-
                     }
                 })
                 .setNegativeButton("Cancel",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
+                                dialog.cancel(); // Cancels the dialog.
                             }
                         });
         AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+        alertDialog.show(); // Shows the dialog.
     }
-
-
 }
